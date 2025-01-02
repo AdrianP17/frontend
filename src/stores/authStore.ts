@@ -12,11 +12,12 @@ type Actions = {
   setToken: (token: string) => void;
   setUser: (user: User) => void;
   logout: () => void;
+  checkAuth: () => boolean;
 };
 
 export const useAuthStore = create(
   persist<State & Actions>(
-    (set) => ({
+    (set, get) => ({
       token: "",
       user: {
         sub: 0,
@@ -46,6 +47,18 @@ export const useAuthStore = create(
           },
           isAuth: false,
         })),
+      checkAuth: () => {
+        const {token, user, logout} = get()
+        if(!token) return false;
+
+        // Verificar expiracion del token
+        const currentTime = Date.now() / 1000;
+        if(user.exp < currentTime) {
+          logout()
+          return false;
+        }
+      return true
+      }
     }),
     { name: "auth" }
   )

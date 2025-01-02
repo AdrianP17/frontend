@@ -26,7 +26,6 @@ function Formlogin({}: Props) {
     try {
     const res = await api.post('/auth/login', data)
     setToken(res.data.access_token)
-    console.log(jwtDecode(res.data.access_token))
     router.push('/todos')
     } catch (error) {
       console.log(error)

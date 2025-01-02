@@ -27,6 +27,9 @@ export default function UpdateFormTodo({id}: Props) {
         async function fetchTask() {
             try {
                 const res = await tasksApi.getById(id)
+                if(res.status === 401) {
+                    router.push('/login')
+                }
                 // Actualiza los valores del formulario con los datos obtenidos
                 const { title, description, tags } = res.data
                 reset({

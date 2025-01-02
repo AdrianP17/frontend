@@ -1,5 +1,6 @@
 import { Task } from "@/types/Task"
 import { TbFlag3Filled } from "react-icons/tb";
+import { MdEdit, MdDelete  } from "react-icons/md";
 import {
   Select,
   SelectContent,
@@ -8,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { tasksApi } from "@/utils/api"
+import Link from "next/link";
 import { ChangeEvent, ChangeEventHandler, useState } from "react"
 type Props = {
   todo: Task
@@ -35,7 +37,16 @@ export default function Todo({ todo }: Props) {
   }
 
   return (
-    <div className="p-4 rounded-lg flex flex-col border max-w-[280px]">
+    <div className="p-4 rounded-lg flex flex-col border max-w-[280px] relative">
+      <div className="flex flex-col gap-2 absolute top-1 right-1 ">
+      <Link className="grid content-center p-2 bg-gray-50 text-gray-500 rounded-md" href={`/todos/${todo.id}`} ><MdEdit /></Link>
+      <button onClick={() => {
+        const confirmDelete = confirm('¿Estás seguro de eliminar esta tarea?')
+        if(confirmDelete) {
+          tasksApi.delete(String(todo.id))
+        }
+      }} className="grid content-center p-2 bg-gray-50 text-red-500 rounded-md"><MdDelete /></button>
+      </div>
       <div className="">
         <p className="text-2xl font-medium mb-2">{todo.title}</p>
         <div className="flex gap-3 items-center mb-2">

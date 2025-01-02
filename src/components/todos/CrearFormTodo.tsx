@@ -35,7 +35,6 @@ export default function CrearFormTodo() {
             const {description, tags, title} = data
             
             const createdTask = await tasksApi.create(title, description, id, tags)
-            console.log(createdTask)
 
             router.push('/todos')
         } catch (error) {

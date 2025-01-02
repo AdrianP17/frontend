@@ -7,15 +7,23 @@ import { useRouter } from 'next/navigation'
 import { Task } from '@/types/Task'
 import { useAuthStore } from '@/stores/authStore'
 import Link from 'next/link'
+import withAuth from '@/components/auth/WithAuth';
 type Props = {}
 
 function page({}: Props) {
   const [tasks, setTasks] = useState<Task[]>([])
+  const router = useRouter()
+  const {isAuth} = useAuthStore()
+  if(!isAuth) {
+    router.push('/login')
+  }
   useEffect(() => {
     async function fetchTasks () {
       try {
         const res = await tasksApi.getAll()
-      console.log(res.data)
+        if(res.status === 401) {
+          router.push('/login')
+        }
       setTasks(res.data)
       } catch (error) {
         console.log(error)
@@ -24,7 +32,6 @@ function page({}: Props) {
     }
     fetchTasks()
   } , [])
-  const router = useRouter()
   const logout = useAuthStore(state => state.logout)
   
   return (
@@ -44,4 +51,4 @@ function page({}: Props) {
   )
 }
 
-export default page
+export default withAuth(page)

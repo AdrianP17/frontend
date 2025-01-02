@@ -16,6 +16,20 @@ api.interceptors.request.use((config) => {
     }
     return config
 })
+
+// Interceptor para manejar errores de autenticación
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        const logout = useAuthStore.getState().logout;
+        logout(); // Limpia el estado del auth store
+        window.location.href = "/login"; // Redirige al login
+      }
+      return Promise.reject(error);
+    }
+  );
+
 export default api
 
 export const tasksApi = {

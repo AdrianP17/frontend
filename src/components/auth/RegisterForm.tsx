@@ -23,9 +23,7 @@ function RegisterForm() {
 
     const onSubmit = async (data: inputs) => {
         try {
-            console.log(data)
             const { repeatPassword, ...rest } = data
-            console.log(rest)
             const res = await api.post('/auth/register', rest)
             router.push('/login')
         } catch (error) {
