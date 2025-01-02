@@ -20,7 +20,7 @@ export default api
 export const tasksApi = {
     getAll: () => api.get<any[]>('/tasks'),
     getById: (id: string) => api.get<any>(`/tasks/${id}`),
-    create: (title: string, description: string, userId: string, tasks: string[]) => api.post('/tasks', {title, description, userId, tasks}),
+    create: (title: string, description: string, userId: number, tags: string[]) => api.post('/tasks', {title, description, userId, tags}),
     update: (id: string, data: Partial<any>) => api.put<any>(`/tasks/${id}`, data),
     delete: (id: string) => api.delete(`/tasks/${id}`),
 }
