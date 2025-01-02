@@ -35,17 +35,24 @@ function Formlogin({}: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className="w-full sm:min-w-[400px] space-y-6" onSubmit={handleSubmit(onSubmit)}>
+
+      <div className="flex flex-col gap-1">
           <label htmlFor="username">Usuario</label>
-          <input type="text" {...register('username')} />
-          {errors.username && <p>{errors.username.message}</p>}
+          <input className="p-2 border rounded-md" type="text" {...register('username')} />
+          {errors.username && <p className="text-sm text-red-700">{errors.username.message}</p>}
+      </div>
+      <div className="flex flex-col gap-1">
           <label htmlFor="password">Contraseña</label>
-          <input type="password" {...register('password')}/>
-          {errors.password && <p>{errors.password.message}</p>}
+          <input className="p-2 border rounded-md" type="password" {...register('password')}/>
+          {errors.password && <p className="text-sm text-red-700">{errors.password.message}</p>}
+      </div>
         
-          <button className="" type="submit" >Login</button>
+          <button className="w-full px-4 py-2 bg-gray-800 text-white rounded-md" type="submit" >Login</button>
+          <div className="mt-2 flex items-center justify-between">
           <span>¿No tienes una cuenta?</span>
-          <Link href={"register"}>Regístrate</Link>
+          <Link className="text-sm underline" href={"register"}>Regístrate</Link>
+          </div>
         </form>
   )
 }

@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation"
 
 const inputSchema = z.object({
     username: z.string().min(4, 'El usuario debe tener al menos 4 caracteres.').max(50, 'El usuario debe tener máximo 50 caracteres.'),
-    name: z.string(),
-    lastname: z.string(),
+    name: z.string().nonempty({message: 'Debe tener al menos un caracter'}),
+    lastname: z.string().nonempty({message: 'Debe tener al menos un caracter'}),
     password: z.string().min(4, 'La contraseña debe tener al menos 4 caracteres.'),
     repeatPassword: z.string()
 }).refine(data => data.password === data.repeatPassword, { message: 'Las contraseñas no coinciden', path: ['repeatPassword'] });
@@ -35,29 +35,40 @@ function RegisterForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form className="w-full sm:min-w-[400px] space-y-6" onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex flex-col gap-1">
             <label htmlFor="username">Usuario</label>
-            <input type="text" {...register('username')} />
-            {errors.username && <p>{errors.username.message}</p>}
+            <input className="p-2 border rounded-md" type="text" {...register('username')} />
+            {errors.username && <p className="text-sm text-red-700">{errors.username.message}</p>}
 
-            <label htmlFor="name">Nombre</label>
-            <input type="text" {...register('name')} />
-            {errors.name && <p>{errors.name.message}</p>}
+        </div>
+      <div className="flex flex-col gap-1">
+      <label htmlFor="name">Nombre</label>
+            <input className="p-2 border rounded-md" type="text" {...register('name')} />
+            {errors.name && <p className="text-sm text-red-700">{errors.name.message}</p>}
+        </div>
 
-            <label htmlFor="lastname">Apellido</label>
-            <input type="text" {...register('lastname')} />
-            {errors.lastname && <p>{errors.lastname.message}</p>}
+        <div className="flex flex-col gap-1">
+        <label htmlFor="lastname">Apellido</label>
+            <input className="p-2 border rounded-md" type="text" {...register('lastname')} />
+            {errors.lastname && <p className="text-sm text-red-700">{errors.lastname.message}</p>}
+        </div>
 
-            <label htmlFor="password">Contraseña</label>
-            <input type="password" {...register('password')} />
-            {errors.password && <p>{errors.password.message}</p>}
-
-            <label htmlFor="password">Repita la contraseña</label>
-            <input type="password" {...register('repeatPassword')} />
-            {errors.repeatPassword && <p>{errors.repeatPassword.message}</p>}
-            <span>¿Ya tienes una cuenta?</span>
-            <Link href="/login">Inicia sesión</Link>
-            <button className="" type="submit" >Register</button>
+        <div className="flex flex-col gap-1">
+        <label htmlFor="password">Contraseña</label>
+            <input className="p-2 border rounded-md" type="password" {...register('password')} />
+            {errors.password && <p className="text-sm text-red-700">{errors.password.message}</p>}
+        </div>
+        <div className="flex flex-col gap-1">
+        <label htmlFor="password">Repita la contraseña</label>
+            <input className="p-2 border rounded-md" type="password" {...register('repeatPassword')} />
+            {errors.repeatPassword && <p className="text-sm text-red-700">{errors.repeatPassword.message}</p>}
+        </div>
+            <button className="w-full px-4 py-2 bg-gray-800 text-white rounded-md" type="submit" >Register</button>
+            <div className="mt-2 flex items-center justify-between">
+          <span>¿Ya tienes una cuenta?</span>
+          <Link className="text-sm underline" href='/login'>Inicia sesión</Link>
+          </div>
         </form>
     )
 }

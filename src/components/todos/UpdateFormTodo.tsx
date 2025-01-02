@@ -1,29 +1,49 @@
-"use client"
-import { useForm, useFieldArray, Controller } from "react-hook-form"
+'use client'
 import { useAuthStore } from "@/stores/authStore"
-import { RxCross2 } from "react-icons/rx";
-import { MdAdd } from "react-icons/md";
-import api, { tasksApi } from "@/utils/api"
+import { tasksApi } from "@/utils/api"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import {z} from 'zod'
-// import { useRouter } from "next/navigation"
+import { Controller, useFieldArray, useForm } from "react-hook-form"
+import { TaskDto, InputTaskType } from "./CrearFormTodo"
+import { useEffect, useState } from "react"
+import { RxCross2 } from "react-icons/rx"
+import { MdAdd } from "react-icons/md"
+type Props = {
+    id: string
+}
 
-export const TaskDto = z.object({
-    title: z.string().min(3, {message: 'Mínimo 3 caracteres'}).max(40, {message: 'El título no debe tener más de 40 caracteres'}),
-    description: z.string().min(3, {message: 'Mínimo 3 caracteres'}).max(80, {message: 'No debes escribir más de 80 caracteres'}),
-    tags: z.array(z.string().min(1, { message: 'Etiqueta vacía no permitida' })).min(1).max(5)
-})
-export type InputTaskType = z.infer<typeof TaskDto>
+export default function UpdateFormTodo({id}: Props) {
+    const userId = useAuthStore(state => state.user.sub)
 
-export default function CrearFormTodo() {
-    const id = useAuthStore(state => state.user.sub)
-    const {register , handleSubmit, formState: {errors}, control} = useForm<InputTaskType>({
+    const {register , handleSubmit, formState: {errors}, control, reset} = useForm<InputTaskType>({
         defaultValues: {
+            title: '',
+            description: '',
             tags: ['']
         },
         resolver: zodResolver(TaskDto)
     })
+    useEffect(()=> {
+        async function fetchTask() {
+            try {
+                const res = await tasksApi.getById(id)
+                // Actualiza los valores del formulario con los datos obtenidos
+                const { title, description, tags } = res.data
+                reset({
+                    title: title || '',
+                    description: description || '',
+                    tags: tags || ['']
+                })
+            } catch (error) {
+                console.error('Error fetching task:', error);
+            } 
+    
+        }
+        fetchTask()
+    }, [])
+    
+
+   
     const {fields, append, remove} = useFieldArray({
         control,
         name:'tags'
@@ -32,9 +52,8 @@ export default function CrearFormTodo() {
 
     async function onSubmit (data : InputTaskType) {
         try {
-            const {description, tags, title} = data
             
-            const createdTask = await tasksApi.create(title, description, id, tags)
+            const createdTask = await tasksApi.update(id, data)
             console.log(createdTask)
 
             router.push('/todos')
@@ -43,7 +62,8 @@ export default function CrearFormTodo() {
         }
     }
 
-    return (
+
+  return (
     <form className="w-full sm:min-w-[400px] space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-1">
         <label htmlFor="">Título</label>
@@ -70,7 +90,7 @@ export default function CrearFormTodo() {
         <button type="button" className="flex items-center text-gray-600 gap-2 " onClick={() => append('')}><MdAdd />Añadir etiqueta</button>
         {errors.tags && <p>{errors.tags.message}</p>}
     
-        <button type="submit" className="w-full px-5 py-2 bg-black text-white rounded-md">Enviar</button>
+        <button type="submit" className="w-full px-5 py-2 bg-black text-white rounded-md">Actualizar</button>
     </form>
   )
 }
